@@ -29,17 +29,17 @@ function createElement(tag,className){
 	return $tag;
 }
 
-function createPlayer(PlayerObj){
-	const playerFirst = createElement('div','player'+PlayerObj.player);
+function createPlayer(playerObj){
+	const playerFirst = createElement('div','player'+playerObj.player);
 	const progressbar = createElement('div','progressbar');
 	const character = createElement('div','character');
 	const life = createElement('div','life');
 	const img = createElement('img');
 	const name = createElement('div','name');
 
-	life.style.width = PlayerObj.hp + '%';
-	name.textContent = PlayerObj.name;
-	img.src = PlayerObj.img;
+	life.style.width = playerObj.hp + '%';
+	name.textContent = playerObj.name;
+	img.src = playerObj.img;
 
 	playerFirst.appendChild(progressbar);
 	playerFirst.appendChild(character);
@@ -51,51 +51,42 @@ function createPlayer(PlayerObj){
 
 function changeHP(player){
 	const playerLife = document.querySelector('.player'+player.player +' .life');
-	player.hp -= RandomHp();
+	player.hp -= getRandom(20);
 
-
-	if(player.hp <= 0){
+	if (player.hp <= 0) {
 		player.hp = 0;
-		playerLife.style.width = '0%'
 	}
 	playerLife.style.width = player.hp + '%';
 }
 
-function gameOver(){
-	randomButton.disabled = true;
-	if(player1.hp != 0){
-		arenas.appendChild(playerWin(player1.name));
-	}else if(player2.hp != 0){
-		arenas.appendChild(playerWin(player2.name));
-	}else{
-		arenas.appendChild(playerWin('nobody'));
-	}
+function getRandom(num){
+	return Math.ceil(Math.random() * num);
 }
 
-function RandomHp(){
-	return Math.floor(Math.random() * 20 + 1);
-}
-
-function playerWin(name){
+function playerWins(name){
 	const loseTitle = createElement('div', 'loseTitle');
-	loseTitle.innerHTML = name + ' ' + 'win';
-	randomButton.disabled = true;
-	randomButton.style.display = 'none';
+	if (name) {
+		loseTitle.innerHTML = name + ' wins';
+	} else {
+		loseTitle.innerHTML = 'draw';
+	}
 	return loseTitle;
 }
 
-//function playerLose(name){
-	//const loseTitle = createElement('div', 'loseTitle');
-	//loseTitle.innerHTML = name + ' ' + 'lose';
-
-	//return loseTitle
-//}
-
 randomButton.addEventListener('click',()=>{
 	changeHP(player1);
-	changeHP(player2)
-	if(player1.hp <= 0 || player2.hp <= 0){
-		gameOver();
+	changeHP(player2);
+
+	if(player1.hp === 0 || player2.hp === 0){
+		randomButton.disabled = true;
+	}
+
+	if (player1.hp === 0 && player1.hp < player2.hp) {
+		arenas.appendChild(playerWins(player2.name));
+	} else if (player2.hp === 0 && player2.hp < player1.hp) {
+		arenas.appendChild(playerWins(player1.name));
+	} else if (player1.hp === 0 && player2.hp === 0) {
+		arenas.appendChild(playerWins());
 	}
 })
 
