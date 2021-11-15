@@ -1,4 +1,5 @@
 const arenas = document.querySelector('.arenas');
+const randomButton = document.querySelector('.button');
 
 const player1 = {
 	player: 1,
@@ -22,32 +23,72 @@ const player2 = {
 	}
 }
 
-function createPlayer(playerNumber, playerName, healthPoints) {
-	const player = document.createElement('div');
-	const progressBar = document.createElement('div');
-	const character = document.createElement('div');
-	const life = document.createElement('div');
-	const name = document.createElement('div');
-	const img = document.createElement('img');
-
-	player.appendChild(progressBar);
-	player.appendChild(character);
-	progressBar.appendChild(life);
-	progressBar.appendChild(name);
-	character.appendChild(img);
-
-	player.classList.add('player'+playerNumber.player); // playerNumber
-	progressBar.classList.add('progressbar');
-	character.classList.add('character');
-	life.classList.add('life');
-	name.classList.add('name');
-
-	img.src = playerNumber.img;
-	life.style.width = healthPoints + '%';
-	name.innerText = playerName;
-
-	return player;
+function createElement(tag,className){
+	const $tag = document.createElement(tag);
+	$tag.className = className;
+	return $tag;
 }
 
-arenas.appendChild(createPlayer(player1, 'Scorpion', 50));
-arenas.appendChild(createPlayer(player2, 'Sub-Zero', 80));
+function createPlayer(playerObj){
+	const playerFirst = createElement('div','player'+playerObj.player);
+	const progressbar = createElement('div','progressbar');
+	const character = createElement('div','character');
+	const life = createElement('div','life');
+	const img = createElement('img');
+	const name = createElement('div','name');
+
+	life.style.width = playerObj.hp + '%';
+	name.textContent = playerObj.name;
+	img.src = playerObj.img;
+
+	playerFirst.appendChild(progressbar);
+	playerFirst.appendChild(character);
+	progressbar.appendChild(life);
+	progressbar.appendChild(name);
+	character.appendChild(img)
+	return playerFirst
+}
+
+function changeHP(player){
+	const playerLife = document.querySelector('.player'+player.player +' .life');
+	player.hp -= getRandom(20);
+
+	if (player.hp <= 0) {
+		player.hp = 0;
+	}
+	playerLife.style.width = player.hp + '%';
+}
+
+function getRandom(num){
+	return Math.ceil(Math.random() * num);
+}
+
+function playerWins(name){
+	const loseTitle = createElement('div', 'loseTitle');
+	if (name) {
+		loseTitle.innerHTML = name + ' wins';
+	} else {
+		loseTitle.innerHTML = 'draw';
+	}
+	return loseTitle;
+}
+
+randomButton.addEventListener('click',()=>{
+	changeHP(player1);
+	changeHP(player2);
+
+	if(player1.hp === 0 || player2.hp === 0){
+		randomButton.disabled = true;
+	}
+
+	if (player1.hp === 0 && player1.hp < player2.hp) {
+		arenas.appendChild(playerWins(player2.name));
+	} else if (player2.hp === 0 && player2.hp < player1.hp) {
+		arenas.appendChild(playerWins(player1.name));
+	} else if (player1.hp === 0 && player2.hp === 0) {
+		arenas.appendChild(playerWins());
+	}
+})
+
+arenas.appendChild(createPlayer(player1));
+arenas.appendChild(createPlayer(player2));
