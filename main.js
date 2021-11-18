@@ -7,8 +7,13 @@ const player1 = {
 	hp: 100,
 	img: 'https://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
 	weapon: ['Spear', 'Fire'],
+
+	changeHP: changeHP,
+	elHP: elHP,
+	renderHP: renderHP,
+
 	attack: function() {
-		console.log(player1.name + ' Fight...');
+		console.log(this.name + ' Fight...');
 	}
 }
 
@@ -18,8 +23,13 @@ const player2 = {
 	hp: 100,
 	img: 'https://reactmarathon-api.herokuapp.com/assets/subzero.gif',
 	weapon: ['Shuriken', 'Ice'],
+
+	changeHP: changeHP,
+	elHP: elHP,
+	renderHP: renderHP,
+
 	attack: function() {
-		console.log(player2.name + ' Fight...');
+		console.log(this.name + ' Fight...');
 	}
 }
 
@@ -49,14 +59,31 @@ function createPlayer(playerObj){
 	return playerFirst
 }
 
-function changeHP(player){
-	const playerLife = document.querySelector('.player'+player.player +' .life');
-	player.hp -= getRandom(20);
+function changeHP(amount){
+	this.hp -= amount;
 
-	if (player.hp <= 0) {
-		player.hp = 0;
+	if (this.hp <= 0) {
+		this.hp = 0;
 	}
-	playerLife.style.width = player.hp + '%';
+}
+
+function elHP() {
+	return document.querySelector('.player' + this.player +' .life');
+}
+
+function renderHP() {
+	this.elHP().style.width = this.hp + '%';
+}
+
+function createReloadButton() {
+	const reloadWrap = createElement('div', 'reloadWrap');
+	const reloadButton = createElement('button', 'button');
+	reloadButton.innerHTML = 'Restart';
+	reloadWrap.appendChild(reloadButton);
+	reloadButton.addEventListener('click', () => {
+		window.location.reload();
+	})
+	return reloadWrap
 }
 
 function getRandom(num){
@@ -73,12 +100,16 @@ function playerWins(name){
 	return loseTitle;
 }
 
-randomButton.addEventListener('click',()=>{
-	changeHP(player1);
-	changeHP(player2);
+randomButton.addEventListener('click',() => {
+	player1.changeHP(getRandom(20));
+	player2.changeHP(getRandom(20));
+	player1.renderHP();
+	player2.renderHP();
 
-	if(player1.hp === 0 || player2.hp === 0){
+	if (player1.hp === 0 || player2.hp === 0){
 		randomButton.disabled = true;
+		randomButton.style.display = 'none';
+		arenas.appendChild(createReloadButton());
 	}
 
 	if (player1.hp === 0 && player1.hp < player2.hp) {
