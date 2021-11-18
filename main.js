@@ -65,7 +65,6 @@ function changeHP(amount){
 	if (this.hp <= 0) {
 		this.hp = 0;
 	}
-	console.log(this.hp)
 }
 
 function elHP() {
@@ -104,8 +103,6 @@ function playerWins(name){
 randomButton.addEventListener('click',() => {
 	player1.changeHP(getRandom(20));
 	player2.changeHP(getRandom(20));
-	player1.elHP();
-	player2.elHP();
 	player1.renderHP();
 	player2.renderHP();
 
