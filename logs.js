@@ -1,6 +1,4 @@
-export {logs};
-
-const logs = {
+export const logs = {
 	start: [
 		'Часы показывали [time], когда [player1] и [player2] бросили вызов друг другу.',
 		'[player1] и [player2] бросили вызов друг другу, когда на курантах было [time]',
