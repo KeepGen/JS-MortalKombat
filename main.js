@@ -9,56 +9,46 @@ import {showResult} from './afterBattle.js';
 
 export {arenas, formFight, createPlayer};
 
-function createPlayer(playerObj){
-	const playerFirst = createElement('div','player'+playerObj.player);
-	const progressbar = createElement('div','progressbar');
-	const character = createElement('div','character');
-	const life = createElement('div','life');
-	const img = createElement('img');
-	const name = createElement('div','name');
+function createPlayer({ player, hp, name, img }){
+	const $player = createElement('div',`player${player}`);
+	const $progressbar = createElement('div','progressbar');
+	const $character = createElement('div','character');
+	const $life = createElement('div','life');
+	const $img = createElement('img');
+	const $name = createElement('div','name');
 
-	life.style.width = playerObj.hp + '%';
-	name.textContent = playerObj.name;
-	img.src = playerObj.img;
+	$life.style.width = hp + '%';
+	$name.textContent = name;
+	$img.src = img;
 
-	playerFirst.appendChild(progressbar);
-	playerFirst.appendChild(character);
-	progressbar.appendChild(life);
-	progressbar.appendChild(name);
-	character.appendChild(img)
-	return playerFirst
+	$player.appendChild($progressbar);
+	$player.appendChild($character);
+	$progressbar.appendChild($life);
+	$progressbar.appendChild($name);
+	$character.appendChild($img)
+	return $player
 }
 
 formFight.addEventListener('submit', function(e) {
 	e.preventDefault();
 
-	const enemy = enemyAttack();
-	const attack = playerAttack();
+	const {hit: hitEnemy, defence: defenceEnemy, value: valueEnemy} = enemyAttack();
+	const {hit, defence, value} = playerAttack();
 
-	if (enemy.hit !== attack.defence) {
-		player1.changeHP(enemy.value);
+	if (hitEnemy !== defence) {
+		player1.changeHP(valueEnemy);
 		player1.renderHP();
-		generateLogs('hit', player2, player1, enemy.value);
-	}
-	if (attack.hit !== enemy.defence) {
-		player2.changeHP(attack.value);
-		player2.renderHP();
-		generateLogs('hit', player1, player2, attack.value);
-	}
-
-	if (attack.hit === enemy.defence) {
+		generateLogs('hit', player2, player1, valueEnemy);
+	} else {
 		generateLogs('defence', player2, player1);
 	}
-	if (enemy.hit === attack.defence) {
-		generateLogs('defence', player1, player2);
-	}
 
-	if (player1.hp === 0 && player2.hp > 0) {
-		generateLogs('end', player1, player2);
-	} else if (player1.hp > 0 && player2.hp === 0) {
-		generateLogs('end', player1, player2);
-	} else if (player1.hp === 0 && player2.hp === 0) {
-		generateLogs('draw', player1, player2);
+	if (hit !== defenceEnemy) {
+		player2.changeHP(value);
+		player2.renderHP();
+		generateLogs('hit', player1, player2, value);
+	} else {
+		generateLogs('defence', player1, player2);
 	}
 
 	showResult();

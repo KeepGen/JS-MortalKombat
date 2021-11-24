@@ -28,7 +28,7 @@ function changeHP(amount){
 }
 
 function elHP() {
-	return document.querySelector('.player' + this.player +' .life');
+	return document.querySelector(`.player${this.player} .life`);
 }
 
 function renderHP() {
